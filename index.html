@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gymbil — Train anywhere</title>
+<style>
+  :root{
+    --ink:#0D0D0D;
+    --ink-2:#141414;
+    --ink-3:#1c1c1e;
+    --gym:#00B140;
+    --bil:#00E676;
+    --paper:#F4F6F4;
+    --muted:#9aa39a;
+    --line:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+  /* wordmark */
+  .mark{font-weight:800;letter-spacing:-0.02em;font-family:"Helvetica Neue",Arial,sans-serif}
+  .mark .g{color:var(--gym)}
+  .mark .b{color:var(--bil)}
+
+  /* nav */
+  nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:rgba(13,13,13,0.72);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  nav .mark{font-size:24px}
+  nav .links{display:flex;gap:26px;font-size:14px}
+  nav .links a{color:var(--muted);text-decoration:none;transition:color .2s}
+  nav .links a:hover{color:var(--paper)}
+  @media(max-width:640px){nav .links{display:none}}
+
+  /* hero */
+  .hero{position:relative;padding:120px 0 110px;text-align:center;overflow:hidden}
+  .hero .glow{
+    position:absolute;width:680px;height:680px;border-radius:50%;
+    background:radial-gradient(circle, rgba(0,177,64,0.22), transparent 62%);
+    top:-220px;left:50%;transform:translateX(-50%);pointer-events:none;
+  }
+  .hero .glow2{
+    position:absolute;width:420px;height:420px;border-radius:50%;
+    background:radial-gradient(circle, rgba(0,230,118,0.16), transparent 60%);
+    bottom:-160px;right:-80px;pointer-events:none;
+  }
+  .hero .mark{font-size:92px;line-height:1;position:relative}
+  .hero .tag{font-size:24px;font-weight:300;color:var(--paper);margin-top:22px;letter-spacing:.01em;position:relative}
+  .hero .sub{max-width:560px;margin:22px auto 0;color:var(--muted);font-size:17px;position:relative}
+  .hero .pill{
+    display:inline-block;margin-top:34px;position:relative;
+    border:1px solid var(--line);border-radius:999px;
+    padding:9px 18px;font-size:13px;color:var(--muted);
+    background:rgba(255,255,255,0.02);
+  }
+  .hero .pill b{color:var(--bil);font-weight:600}
+  @media(max-width:640px){.hero .mark{font-size:58px}.hero{padding:80px 0 70px}}
+
+  /* sections */
+  section{padding:96px 0;border-top:1px solid var(--line)}
+  .eyebrow{
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gym);font-weight:700;margin-bottom:16px;
+  }
+  h2{font-size:38px;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+  h2 .accent{color:var(--bil)}
+  .lead{font-size:19px;color:#cdd3cd;max-width:680px;margin-top:20px}
+  @media(max-width:640px){h2{font-size:28px}section{padding:64px 0}}
+
+  /* idea cards */
+  .grid{display:grid;gap:18px;margin-top:48px}
+  .grid.three{grid-template-columns:repeat(3,1fr)}
+  .grid.two{grid-template-columns:1fr 1fr}
+  @media(max-width:820px){.grid.three,.grid.two{grid-template-columns:1fr}}
+  .card{
+    background:var(--ink-2);border:1px solid var(--line);
+    border-radius:18px;padding:28px;transition:transform .25s,border-color .25s;
+  }
+  .card:hover{transform:translateY(-4px);border-color:rgba(0,230,118,0.35)}
+  .card .num{font-size:13px;font-weight:700;color:var(--gym);letter-spacing:.1em}
+  .card h3{font-size:20px;font-weight:700;margin:14px 0 10px}
+  .card p{color:var(--muted);font-size:15px}
+  .card .ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(0,177,64,0.12);margin-bottom:6px}
+  .card .ico svg{width:22px;height:22px;stroke:var(--bil);fill:none;stroke-width:1.8}
+
+  /* opportunity split */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:46px}
+  @media(max-width:820px){.split{grid-template-columns:1fr}}
+  .stat{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;padding:30px}
+  .stat .big{font-size:46px;font-weight:800;color:var(--bil);letter-spacing:-0.02em}
+  .stat .lbl{color:var(--muted);font-size:15px;margin-top:6px}
+  .note{color:var(--muted);font-size:15px;margin-top:14px}
+
+  /* brand */
+  .brandbox{background:linear-gradient(180deg,var(--ink-2),var(--ink));border:1px solid var(--line);border-radius:22px;padding:46px;margin-top:46px}
+  .anatomy{text-align:center;padding:30px 0 10px}
+  .anatomy .mark{font-size:78px;line-height:1}
+  .seam{display:inline-block;position:relative}
+  .seam .tick{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);letter-spacing:.1em;white-space:nowrap}
+  .seam .bar{position:absolute;left:50%;top:6px;bottom:6px;width:2px;background:repeating-linear-gradient(var(--muted),var(--muted) 4px,transparent 4px,transparent 8px);transform:translateX(-50%)}
+  @media(max-width:640px){.anatomy .mark{font-size:46px}}
+
+  .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+  @media(max-width:640px){.swatches{grid-template-columns:1fr 1fr}}
+  .sw{border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .sw .chip{height:96px}
+  .sw .meta{padding:14px;background:var(--ink-2)}
+  .sw .meta .nm{font-weight:700;font-size:15px}
+  .sw .meta .hx{color:var(--muted);font-size:13px;font-family:monospace;margin-top:3px}
+  .sw .meta .rl{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.4}
+
+  .voice{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:38px}
+  @media(max-width:820px){.voice{grid-template-columns:1fr}}
+  .voice .vc{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .voice .vc .k{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gym);font-weight:700}
+  .voice .vc p{margin-top:12px;color:#cdd3cd;font-size:15px}
+  .voice .vc .ex{color:var(--bil);font-weight:600}
+
+  /* app preview */
+  .phones{display:flex;gap:30px;overflow-x:auto;padding:50px 4px 24px;scroll-snap-type:x mandatory}
+  .phones::-webkit-scrollbar{height:8px}
+  .phones::-webkit-scrollbar-thumb{background:var(--ink-3);border-radius:8px}
+  .phone-col{scroll-snap-align:center;flex:0 0 auto;text-align:center}
+  .phone-cap{margin-top:18px;font-size:14px;color:var(--muted);max-width:260px}
+  .phone-cap b{color:var(--paper);display:block;font-size:15px;margin-bottom:3px}
+  .phone{
+    width:268px;height:560px;border-radius:42px;background:#000;
+    border:1px solid rgba(255,255,255,0.12);padding:11px;
+    box-shadow:0 30px 70px rgba(0,0,0,0.55),0 0 0 1px rgba(0,230,118,0.05);
+    position:relative;
+  }
+  .screen{width:100%;height:100%;border-radius:32px;overflow:hidden;background:var(--ink);position:relative;display:flex;flex-direction:column}
+  .notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:90px;height:22px;background:#000;border-radius:0 0 14px 14px;z-index:9}
+  .sbar{display:flex;justify-content:space-between;align-items:center;padding:13px 20px 6px;font-size:11px;color:var(--paper);font-weight:600}
+  .sbar .dots span{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--paper);margin-left:3px}
+  .sc-body{flex:1;overflow:hidden;padding:6px 16px 16px}
+
+  /* generic screen bits */
+  .greet{font-size:13px;color:var(--muted)}
+  .h-title{font-size:21px;font-weight:800;margin-top:2px;letter-spacing:-0.01em}
+  .h-title .b{color:var(--bil)}
+  .searchbar{margin-top:14px;background:var(--ink-3);border-radius:12px;padding:11px 13px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .seclabel{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:18px 0 10px;font-weight:700}
+  .gymrow{display:flex;gap:11px;align-items:center;background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:11px;margin-bottom:10px}
+  .gymrow .thumb{width:46px;height:46px;border-radius:10px;flex:0 0 auto}
+  .gymrow .info{flex:1;min-width:0}
+  .gymrow .nm{font-size:14px;font-weight:700}
+  .gymrow .mt{font-size:11px;color:var(--muted);margin-top:2px}
+  .occ{font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px}
+  .occ.low{background:rgba(0,230,118,0.15);color:var(--bil)}
+  .occ.mid{background:rgba(255,196,0,0.15);color:#ffc400}
+  .occ.high{background:rgba(255,90,90,0.15);color:#ff5a5a}
+
+  /* gym profile screen */
+  .cover{height:130px;border-radius:16px;margin-top:4px;position:relative;display:flex;align-items:flex-end;padding:12px;background:linear-gradient(135deg,#0c3b1d,#072813)}
+  .cover .badge{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;color:var(--bil);background:rgba(0,0,0,0.45);padding:4px 9px;border-radius:999px}
+  .cover .cn{font-size:18px;font-weight:800;color:#fff}
+  .cover .cm{font-size:11px;color:#cfe9d6}
+  .facils{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+  .facils span{font-size:11px;color:#cdd3cd;background:var(--ink-3);padding:5px 10px;border-radius:999px}
+  .priceline{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+  .priceline .pr{font-size:13px;color:var(--muted)}
+  .priceline .pr b{color:var(--paper);font-size:18px}
+
+  /* booking screen */
+  .daypick{display:flex;gap:8px;margin-top:8px}
+  .daypick .d{flex:1;text-align:center;background:var(--ink-2);border:1px solid var(--line);border-radius:11px;padding:9px 0}
+  .daypick .d.on{background:var(--gym);border-color:var(--gym)}
+  .daypick .d .dn{font-size:10px;color:var(--muted)}
+  .daypick .d.on .dn{color:rgba(255,255,255,0.8)}
+  .daypick .d .dd{font-size:16px;font-weight:800;margin-top:2px}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+  .slots .s{text-align:center;font-size:12px;font-weight:600;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:10px 0;color:#cdd3cd}
+  .slots .s.on{background:rgba(0,230,118,0.14);border-color:var(--bil);color:var(--bil)}
+  .slots .s.off{opacity:.35}
+  .dur{display:flex;gap:8px;margin-top:6px}
+  .dur .o{flex:1;text-align:center;font-size:12px;font-weight:600;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:10px 0;color:#cdd3cd}
+  .dur .o.on{background:var(--ink-3);border-color:var(--gym);color:var(--paper)}
+
+  /* wallet screen */
+  .balance{background:linear-gradient(135deg,#00B140,#00E676);border-radius:18px;padding:20px;color:#072813;margin-top:6px}
+  .balance .l{font-size:12px;font-weight:700;opacity:.8}
+  .balance .v{font-size:34px;font-weight:800;letter-spacing:-0.02em;margin-top:4px}
+  .balance .sub{font-size:12px;font-weight:600;opacity:.8;margin-top:4px}
+  .wbtns{display:flex;gap:10px;margin-top:14px}
+  .wbtns .wb{flex:1;text-align:center;font-size:13px;font-weight:700;padding:12px 0;border-radius:12px}
+  .wbtns .wb.solid{background:var(--gym);color:#fff}
+  .wbtns .wb.ghost{background:var(--ink-2);border:1px solid var(--line);color:var(--paper)}
+  .txn{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .txn .tn{font-weight:600}
+  .txn .tm{font-size:11px;color:var(--muted);margin-top:1px}
+  .txn .ta{font-weight:700}
+  .txn .ta.minus{color:var(--paper)}
+  .txn .ta.plus{color:var(--bil)}
+
+  .btn-cta{display:block;text-align:center;background:var(--bil);color:#072813;font-weight:800;font-size:13px;padding:13px;border-radius:14px;margin-top:14px}
+
+  .tabbar{display:flex;justify-content:space-around;padding:11px 0 6px;border-top:1px solid var(--line);background:var(--ink-2)}
+  .tabbar .t{font-size:9px;color:var(--muted);text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .tabbar .t.on{color:var(--bil)}
+  .tabbar .t .dot{width:18px;height:18px;border-radius:6px;background:currentColor;opacity:.85}
+
+  /* open questions */
+  .oq{background:var(--ink-2);border:1px solid var(--line);border-left:3px solid var(--gym);border-radius:14px;padding:20px 22px;margin-top:16px}
+  .oq h4{font-size:16px;font-weight:700}
+  .oq p{color:var(--muted);font-size:14px;margin-top:6px}
+  .flag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ffc400;background:rgba(255,196,0,0.12);padding:4px 10px;border-radius:999px;margin-bottom:14px}
+
+  footer{padding:60px 0 80px;text-align:center;border-top:1px solid var(--line)}
+  footer .mark{font-size:30px}
+  footer p{color:var(--muted);font-size:13px;margin-top:14px}
+
+  .scrolltip{font-size:12px;color:var(--muted);margin-top:50px;letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="mark"><span class="g">GYM</span><span class="b">BIL</span></div>
+    <div class="links">
+      <a href="#idea">The idea</a>
+      <a href="#opportunity">The opportunity</a>
+      <a href="#brand">Brand</a>
+      <a href="#app">The app</a>
+      <a href="#status">Where it stands</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="glow"></div>
+  <div class="glow2"></div>
+  <div class="wrap">
+    <div class="mark"><span class="g">GYM</span><span class="b">BIL</span></div>
+    <div class="tag">Train anywhere.</div>
+    <p class="sub">One app that connects every gym in Malta. A single profile, a single wallet, and a training history that follows you wherever you go.</p>
+    <div class="pill">A first look for <b>the two of us</b> before anyone else sees it</div>
+    <div class="scrolltip">SCROLL TO EXPLORE</div>
+  </div>
+</header>
+
+<!-- THE IDEA -->
+<section id="idea">
+  <div class="wrap">
+    <div class="eyebrow">The idea in plain words</div>
+    <h2>Every gym on the island, in <span class="accent">one pocket.</span></h2>
+    <p class="lead">Right now a gym membership ties you to one place. Travel across the island, switch routines, or just fancy a different setup, and you are stuck or paying twice. Gymbil makes the whole network feel like one gym. You book a slot anywhere, pay by the hour or on a network membership, unlock the door with your phone, and your workouts and progress travel with you.</p>
+
+    <div class="grid three">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21c-4-3-8-6.5-8-11a8 8 0 0 1 16 0c0 4.5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>For the gym goer</h3>
+        <p>Freedom to train at any participating gym, with no second membership and no friction. Your history, goals and wallet are always with you.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-6h6v6"/></svg></div>
+        <h3>For the gyms</h3>
+        <p>A ready made booking, entry and payment system with no build cost, plus fresh revenue from quiet hours that used to sit empty.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>For us</h3>
+        <p>A two sided network. We earn a monthly fee from each gym plus a small commission on what flows through. The more it is used, the more it grows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE OPPORTUNITY -->
+<section id="opportunity">
+  <div class="wrap">
+    <div class="eyebrow">Why now, why here</div>
+    <h2>Proven in Europe. <span class="accent">Wide open in Malta.</span></h2>
+    <p class="lead">This model already works across Europe, which takes a lot of the risk out of the concept. The twist is that the big players run a corporate benefit sold through employers, and not one of them operates in Malta. The island sits below their radar, and nobody local has claimed the space.</p>
+
+    <div class="split">
+      <div class="stat">
+        <div class="big">0</div>
+        <div class="lbl">cross gym networks in Malta today. Every multi gym offer here is a single brand with a few branches, not a true network.</div>
+      </div>
+      <div class="stat">
+        <div class="big">Speed</div>
+        <div class="lbl">is the whole defence. On a small island, near total gym coverage is realistic. Lock in the density before the giants ever look this way.</div>
+      </div>
+    </div>
+    <p class="note">Day passes already exist gym by gym at roughly ten to twenty five euro. What does not exist is a single app to book, pay and train across many independently owned gyms with one wallet and a portable record. That gap is the opening.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Three taps from sofa to <span class="accent">squat rack.</span></h2>
+    <div class="grid three">
+      <div class="card">
+        <div class="num">01</div>
+        <h3>Find and book</h3>
+        <p>Open the app, see which gyms are near and how busy each one is right now, and reserve a slot in seconds.</p>
+      </div>
+      <div class="card">
+        <div class="num">02</div>
+        <h3>Walk in</h3>
+        <p>Your phone is the key. Unlock entry at the door, and your time is billed automatically from your wallet.</p>
+      </div>
+      <div class="card">
+        <div class="num">03</div>
+        <h3>Train and track</h3>
+        <p>Log your session, watch your progress build, and carry it all to the next gym. One record, every workout.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND -->
+<section id="brand">
+  <div class="wrap">
+    <div class="eyebrow">Brand identity</div>
+    <h2>A look that feels <span class="accent">local, sharp and alive.</span></h2>
+    <p class="lead">The name carries the idea and the logo carries the energy. GYM is the steady anchor in green. BIL is the spark in bright lime. The colour always breaks on the same seam, right where the M meets the B, so the mark is instantly its own.</p>
+
+    <div class="brandbox">
+      <div class="anatomy">
+        <div class="seam">
+          <span class="mark"><span class="g">GYM</span><span class="b">BIL</span></span>
+        </div>
+        <p class="note" style="margin-top:18px">The split never moves. Green anchors, lime sparks, and the seam stays put.</p>
+      </div>
+
+      <div class="swatches">
+        <div class="sw">
+          <div class="chip" style="background:#0D0D0D;border-bottom:1px solid var(--line)"></div>
+          <div class="meta"><div class="nm">Ink</div><div class="hx">#0D0D0D</div><div class="rl">Home base. The night gym feel.</div></div>
+        </div>
+        <div class="sw">
+          <div class="chip" style="background:#00B140"></div>
+          <div class="meta"><div class="nm">Gym Green</div><div class="hx">#00B140</div><div class="rl">The anchor. Used for GYM.</div></div>
+        </div>
+        <div class="sw">
+          <div class="chip" style="background:#00E676"></div>
+          <div class="meta"><div class="nm">Bil Lime</div><div class="hx">#00E676</div><div class="rl">The rare spark. Buttons and highlights. Kept scarce so it stays loud.</div></div>
+        </div>
+        <div class="sw">
+          <div class="chip" style="background:#F4F6F4"></div>
+          <div class="meta"><div class="nm">Paper</div><div class="hx">#F4F6F4</div><div class="rl">Light backgrounds and reversed lockups.</div></div>
+        </div>
+      </div>
+
+      <div class="voice">
+        <div class="vc">
+          <div class="k">How it speaks</div>
+          <p>Like a witty local friend who trains, not a corporate wellness brand. Short lines, plain verbs, a wink of character. English carries the function, book, pay, train. The local attitude carries the personality.</p>
+        </div>
+        <div class="vc">
+          <div class="k">The tagline</div>
+          <p>Two words that say the whole promise.</p>
+          <p class="ex" style="font-size:22px;margin-top:10px">Train anywhere.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE APP -->
+<section id="app">
+  <div class="wrap">
+    <div class="eyebrow">The app</div>
+    <h2>How it would <span class="accent">look and feel.</span></h2>
+    <p class="lead">A first taste of the experience. Dark, fast and confident, with the lime kept rare so every button feels like it matters. These are early hero screens to set the direction, not final designs. Swipe across to explore.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="phones">
+
+      <!-- HOME -->
+      <div class="phone-col">
+        <div class="phone"><div class="screen">
+          <div class="notch"></div>
+          <div class="sbar"><span>9:41</span><span class="dots"><span></span><span></span><span></span></span></div>
+          <div class="sc-body">
+            <div class="greet">Good evening, Christian</div>
+            <div class="h-title">Find a gym near you</div>
+            <div class="searchbar">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa39a" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+              Search by area, kit or facility
+            </div>
+            <div class="seclabel">Open now near Sliema</div>
+
+            <div class="gymrow">
+              <div class="thumb" style="background:linear-gradient(135deg,#0c3b1d,#00B140)"></div>
+              <div class="info"><div class="nm">Iron Yard</div><div class="mt">Sliema · 400m · open until 23:00</div></div>
+              <div class="occ low">Quiet</div>
+            </div>
+            <div class="gymrow">
+              <div class="thumb" style="background:linear-gradient(135deg,#1a1a2e,#3a3a6a)"></div>
+              <div class="info"><div class="nm">Pulse Fitness</div><div class="mt">Gzira · 1.2km · open 24/7</div></div>
+              <div class="occ mid">Filling</div>
+            </div>
+            <div class="gymrow">
+              <div class="thumb" style="background:linear-gradient(135deg,#2e1a1a,#6a3a3a)"></div>
+              <div class="info"><div class="nm">Coastline Gym</div><div class="mt">St Julian's · 1.8km · open until 22:00</div></div>
+              <div class="occ high">Busy</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="t on"><span class="dot"></span>Discover</div>
+            <div class="t"><span class="dot"></span>Bookings</div>
+            <div class="t"><span class="dot"></span>Wallet</div>
+            <div class="t"><span class="dot"></span>You</div>
+          </div>
+        </div></div>
+        <div class="phone-cap"><b>Discover</b>See what is near and how busy it is, live, before you leave the house.</div>
+      </div>
+
+      <!-- GYM PROFILE -->
+      <div class="phone-col">
+        <div class="phone"><div class="screen">
+          <div class="notch"></div>
+          <div class="sbar"><span>9:41</span><span class="dots"><span></span><span></span><span></span></span></div>
+          <div class="sc-body">
+            <div class="cover">
+              <div class="badge">Quiet now</div>
+              <div><div class="cn">Iron Yard</div><div class="cm">Sliema · strength and conditioning</div></div>
+            </div>
+            <div class="facils">
+              <span>Free weights</span><span>Squat racks</span><span>Sauna</span><span>Showers</span><span>Parking</span>
+            </div>
+            <div class="seclabel">From the floor</div>
+            <div style="display:flex;gap:8px">
+              <div style="flex:1;height:54px;border-radius:10px;background:linear-gradient(135deg,#0c3b1d,#00B140)"></div>
+              <div style="flex:1;height:54px;border-radius:10px;background:linear-gradient(135deg,#143a24,#0a2a16)"></div>
+              <div style="flex:1;height:54px;border-radius:10px;background:linear-gradient(135deg,#1a2e1a,#00B140)"></div>
+            </div>
+            <div class="priceline">
+              <div class="pr">From <b>4.50</b> / hour</div>
+              <div style="font-size:12px;color:var(--bil);font-weight:700">★ 4.8 · 212 reviews</div>
+            </div>
+            <a class="btn-cta">Book a slot</a>
+          </div>
+          <div class="tabbar">
+            <div class="t on"><span class="dot"></span>Discover</div>
+            <div class="t"><span class="dot"></span>Bookings</div>
+            <div class="t"><span class="dot"></span>Wallet</div>
+            <div class="t"><span class="dot"></span>You</div>
+          </div>
+        </div></div>
+        <div class="phone-cap"><b>Gym profile</b>Every gym gets a storefront. Kit, facilities, photos, price and reviews in one place.</div>
+      </div>
+
+      <!-- BOOKING -->
+      <div class="phone-col">
+        <div class="phone"><div class="screen">
+          <div class="notch"></div>
+          <div class="sbar"><span>9:41</span><span class="dots"><span></span><span></span><span></span></span></div>
+          <div class="sc-body">
+            <div class="greet">Iron Yard · Sliema</div>
+            <div class="h-title">Pick your <span class="b">slot</span></div>
+            <div class="seclabel">Day</div>
+            <div class="daypick">
+              <div class="d"><div class="dn">MON</div><div class="dd">16</div></div>
+              <div class="d on"><div class="dn">TUE</div><div class="dd">17</div></div>
+              <div class="d"><div class="dn">WED</div><div class="dd">18</div></div>
+              <div class="d"><div class="dn">THU</div><div class="dd">19</div></div>
+            </div>
+            <div class="seclabel">Time</div>
+            <div class="slots">
+              <div class="s off">17:00</div>
+              <div class="s">17:30</div>
+              <div class="s on">18:00</div>
+              <div class="s">18:30</div>
+              <div class="s">19:00</div>
+              <div class="s off">19:30</div>
+            </div>
+            <div class="seclabel">Duration</div>
+            <div class="dur">
+              <div class="o">1 hr</div>
+              <div class="o on">1.5 hr</div>
+              <div class="o">2 hr</div>
+            </div>
+            <a class="btn-cta">Confirm · 6.75 from wallet</a>
+          </div>
+          <div class="tabbar">
+            <div class="t"><span class="dot"></span>Discover</div>
+            <div class="t on"><span class="dot"></span>Bookings</div>
+            <div class="t"><span class="dot"></span>Wallet</div>
+            <div class="t"><span class="dot"></span>You</div>
+          </div>
+        </div></div>
+        <div class="phone-cap"><b>Booking</b>Date, time and duration in a few taps. Pay straight from the wallet.</div>
+      </div>
+
+      <!-- WALLET -->
+      <div class="phone-col">
+        <div class="phone"><div class="screen">
+          <div class="notch"></div>
+          <div class="sbar"><span>9:41</span><span class="dots"><span></span><span></span><span></span></span></div>
+          <div class="sc-body">
+            <div class="h-title" style="margin-top:4px">Wallet</div>
+            <div class="balance">
+              <div class="l">YOUR BALANCE</div>
+              <div class="v">€42.50</div>
+              <div class="sub">plus Network membership active</div>
+            </div>
+            <div class="wbtns">
+              <div class="wb solid">Top up</div>
+              <div class="wb ghost">Membership</div>
+            </div>
+            <div class="seclabel">Recent</div>
+            <div class="txn"><div><div class="tn">Iron Yard</div><div class="tm">Today · 1.5 hr session</div></div><div class="ta minus">−6.75</div></div>
+            <div class="txn"><div><div class="tn">Top up</div><div class="tm">Yesterday · card</div></div><div class="ta plus">+25.00</div></div>
+            <div class="txn"><div><div class="tn">Pulse Fitness</div><div class="tm">Mon · 1 hr session</div></div><div class="ta minus">−5.00</div></div>
+          </div>
+          <div class="tabbar">
+            <div class="t"><span class="dot"></span>Discover</div>
+            <div class="t"><span class="dot"></span>Bookings</div>
+            <div class="t on"><span class="dot"></span>Wallet</div>
+            <div class="t"><span class="dot"></span>You</div>
+          </div>
+        </div></div>
+        <div class="phone-cap"><b>Wallet</b>One balance for hours and memberships, always visible, billed automatically.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHERE IT STANDS -->
+<section id="status">
+  <div class="wrap">
+    <div class="eyebrow">Where it stands</div>
+    <h2>Settled, and still <span class="accent">in motion.</span></h2>
+    <p class="lead">Being open about what is locked and what is not. The concept, the model and the brand foundation are set. A handful of calls are still open on purpose, so nothing gets treated as final before we sign off on it.</p>
+
+    <div style="margin-top:34px">
+      <span class="flag">Open questions, kept visible</span>
+      <div class="oq">
+        <h4>The launch cluster</h4>
+        <p>Sliema and St Julian's is the leading candidate for a dense first cluster. To confirm together.</p>
+      </div>
+      <div class="oq">
+        <h4>The local campaign voice</h4>
+        <p>The Maltese punchline that echoes the BIL in the name is still being shaped. Christian is the final word on every Maltese line, and nothing local is treated as final until he signs it off.</p>
+      </div>
+      <div class="oq">
+        <h4>The real numbers</h4>
+        <p>The commission and monthly fee splits are sensible starting points. They get firmed up with a first anchor gym and real pricing.</p>
+      </div>
+      <div class="oq">
+        <h4>Names and rights</h4>
+        <p>Trademark clearance and grabbing the social and app store handles are on the near term list.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="mark"><span class="g">GYM</span><span class="b">BIL</span></div>
+    <p>Train anywhere. One app, every gym in Malta.</p>
+    <p style="margin-top:6px">A first look · June 2026 · gymbil.com</p>
+  </div>
+</footer>
+
+</body>
+</html>
